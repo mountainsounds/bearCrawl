@@ -25,6 +25,10 @@ class DomDocumentParser {
    public function getMetaTags() {
     return $this->doc->getElementsByTagName("meta");
   }
+
+  public function getImages() {
+    return $this->doc->getElementsByTagName("img");
+  }
 }
 
 

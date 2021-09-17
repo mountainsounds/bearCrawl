@@ -1,64 +1,27 @@
 <?php
 include("config.php");
 include("classes/DomDocumentParser.php");
+include("helpers/createLink.php");
+include("helpers/linkExists.php");
+include("helpers/insertData.php");
 
 $alreadyCrawled = array();
 $crawling = array();
-
-function insertLink($url, $title, $description, $keywords) {
-	global $con;
-
-	$query = $con->prepare("INSERT INTO sites(url, title, description, keywords)
-							VALUES(:url, :title, :description, :keywords)");
-
-	$query->bindParam(":url", $url);
-	$query->bindParam(":title", $title);
-	$query->bindParam(":description", $description);
-	$query->bindParam(":keywords", $keywords);
-
-	return $query->execute();
-}
-
-function createLink($src, $url) {
-
-	$scheme = parse_url($url)["scheme"]; // http
-	$host = parse_url($url)["host"]; // www.reecekenney.com
-
-	if(substr($src, 0, 2) == "//") {
-		$src =  $scheme . ":" . $src;
-	}
-	else if(substr($src, 0, 1) == "/") {
-		$src = $scheme . "://" . $host . $src;
-	}
-	else if(substr($src, 0, 2) == "./") {
-		$src = $scheme . "://" . $host . dirname(parse_url($url)["path"]) . substr($src, 1);
-	}
-	else if(substr($src, 0, 3) == "../") {
-		$src = $scheme . "://" . $host . "/" . $src;
-	}
-	else if(substr($src, 0, 5) != "https" && substr($src, 0, 4) != "http") {
-		$src = $scheme . "://" . $host . "/" . $src;
-	}
-
-	return $src;
-}
+$alreadyFoundImages = array();
 
 function getDetails($url) {
+	global $alreadyFoundImages;
 
 	$parser = new DomDocumentParser($url);
 
 	$titleArray = $parser->getTitleTags();
 
-	if(sizeof($titleArray) == 0 || $titleArray->item(0) == NULL) {
-		return;
-	}
+	if(sizeof($titleArray) == 0 || $titleArray->item(0) == NULL) return;
 
 	$title = $titleArray->item(0)->nodeValue;
 	$title = str_replace("\n", "", $title);
 
-	if($title == "") {
-		return;
-	}
+	if($title == "") return;
 
 	$description = "";
 	$keywords = "";
@@ -79,8 +42,31 @@ function getDetails($url) {
 	$description = str_replace("\n", "", $description);
 	$keywords = str_replace("\n", "", $keywords);
 
+	if (linkExists($url)) {
+		echo "$url already exists<br>";
+	}
+	else if (insertLink($url, $title, $description, $keywords)) {
+		echo "SUCCESS: $url<br>";
+	} else {
+		echo "ERROR: FAILED TO Insert $url<br>";
+	}
 
-	insertLink($url, $title, $description, $keywords);
+	$imageArray = $parser->getImages();
+	foreach($imageArray as $image) {
+		$src = $image->getAttribute("src");
+		$alt = $image->getAttribute("alt");
+		$title = $image ->getAttribute("title");
+
+		if (!$title && !$alt) continue;
+
+		$src = createLink($src, $url);
+
+		if (!in_array($src, $alreadyFoundImages)) {
+			$alreadyFoundImages[] = $src;
+			insertImage($url, $src, $alt, $title);
+		}
+
+	}
 
 }
 
@@ -113,9 +99,6 @@ function followLinks($url) {
 
 			getDetails($href);
 		}
-		else return;
-
-
 	}
 
 	array_shift($crawling);
@@ -123,9 +106,8 @@ function followLinks($url) {
 	foreach($crawling as $site) {
 		followLinks($site);
 	}
-
 }
 
-$startUrl = "http://www.bbc.com";
+$startUrl = "http://www.nytimes.com";
 followLinks($startUrl);
 ?>
