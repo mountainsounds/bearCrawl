@@ -5,7 +5,6 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
   <title>Welcome to Bear Crawl!</title>
-
   <link rel="stylesheet" type="text/css" href="assets/css/style.css">
 </head>
 <body>
