@@ -1,11 +1,12 @@
 <?php
-  ob_start();
+ob_start();
 
-  try {
-    $con = new PDO("mysql:dbname=google-clone;host=localhost", "root", "");
-    $con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERMODE_WARNING);
-  }
-  catch(PDOExeption $e) {
-    echo "Connection failed: " . $e->getMessage();
-  }
+try {
+
+	$con = new PDO("mysql:dbname=bearCrawl;host=localhost", "root", "");
+	$con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
+}
+catch(PDOException $e) {
+	echo "Connection failed: " . $e->getMessage();
+}
 ?>
