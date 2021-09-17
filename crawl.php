@@ -65,7 +65,6 @@ function getDetails($url) {
 			$alreadyFoundImages[] = $src;
 			insertImage($url, $src, $alt, $title);
 		}
-
 	}
 
 }
@@ -89,9 +88,7 @@ function followLinks($url) {
 			continue;
 		}
 
-
 		$href = createLink($href, $url);
-
 
 		if(!in_array($href, $alreadyCrawled)) {
 			$alreadyCrawled[] = $href;
@@ -108,6 +105,6 @@ function followLinks($url) {
 	}
 }
 
-$startUrl = "http://www.nytimes.com";
+$startUrl = "https://en.wikipedia.org/wiki/Dog";
 followLinks($startUrl);
 ?>
