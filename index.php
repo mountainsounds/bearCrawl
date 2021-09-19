@@ -13,8 +13,8 @@
     <div class="mainSection">
 
       <div class="logoContainer">
-        <img id='wordLogo' src="assets/images/bearCrawlLogo.png">
-        <img id='bearLogo' src="assets/images/bearLogo.jpg">
+        <img id='wordLogo' src="assets/images/logos/bearCrawlLogo.png">
+        <img id='bearLogo' src="assets/images/logos/bearLogo.jpg">
       </div>
 
       <div class="searchContainer">

@@ -7,7 +7,6 @@ html,
 body {
   margin: 0;
   height: 100%;
-  background-color: aliceblue;
   background-image: url(https://images.unsplash.com/photo-1600337752115-de2c09d6704f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2300&q=80);
   background-position: center;
   background-size: cover;
@@ -238,4 +237,38 @@ body {
 
 .resultContainer .description {
   font-size: 12px;
+}
+
+.paginationContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: white;
+  align-items: center;
+  padding-bottom: 25px;
+}
+
+.pageButtons {
+  display: flex;
+}
+
+.pageLogo img {
+  height: 37px;
+}
+
+.pageNumber {
+  font-size: 13px;
+  margin: 5px;
+}
+
+.pageNumberContainer a {
+  text-decoration: none;
+}
+
+#currentPage {
+  color: #000;
+}
+
+a .pageNumber {
+  color: #4285f4;
 }
