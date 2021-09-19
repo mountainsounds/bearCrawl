@@ -1,7 +1,7 @@
 <?php
 
 
-class SiteResultsProvider {
+class ImageResultsProvider {
   private $con;
 
   public function __construct($con) {
@@ -10,10 +10,11 @@ class SiteResultsProvider {
 
   public function getNumResults($term) {
     $query = $this->con->prepare("SELECT COUNT(*) as total
-                                  FROM sites WHERE title LIKE :term
-                                  OR url LIKE :term
-                                  OR keywords LIKE :term
-                                  OR description LIKE :term");
+                                  FROM images
+                                  WHERE title LIKE :term
+                                  OR alt LIKE :term
+                                  AND broken=0
+                                  ");
     $searchTerm = "%". $term . "%";
     $query->bindParam(":term", $searchTerm);
     $query->execute();
@@ -30,10 +31,9 @@ class SiteResultsProvider {
 
 
     $query = $this->con->prepare("SELECT *
-                                  FROM sites WHERE title LIKE :term
-                                  OR url LIKE :term
-                                  OR keywords LIKE :term
-                                  OR description LIKE :term
+                                  FROM images WHERE title LIKE :term
+                                  OR alt LIKE :term
+                                  AND broken = 0
                                   ORDER BY clicks DESC
                                   LIMIT :fromLimit, :pageSize");
     $searchTerm = "%". $term . "%";
@@ -42,16 +42,20 @@ class SiteResultsProvider {
     $query->bindParam(":pageSize", $pageSize, PDO::PARAM_INT);
     $query->execute();
 
-    $resultsHtml = "<div class='siteResults'>";
+    $resultsHtml = "<div class='imageResults'>";
 
     while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
       $id = $row["id"];
-      $url = $row["url"];
+      $imageUrl = $row["imageUrl"];
+      $siteUrl = $row["siteUrl"];
       $title = $row["title"];
-      $description = $row["description"];
+      $alt = $row["alt"];
 
-      $title = $this->trimField($title, 55);
-      $description = $this->trimField($title, 230);
+      if ($title) {
+        $displayText = $title;
+      } else {
+
+      }
 
 
       $resultsHtml .= "<div class='resultContainer'>
@@ -72,11 +76,6 @@ class SiteResultsProvider {
     $resultsHtml .= "</div>";
 
     return $resultsHtml;
-  }
-
-  private function trimField($string, $characterLimit) {
-    $dots = strlen($string) > $characterLimit ? "..." : "";
-    return substr($string, 0, $characterLimit) . $dots;
   }
 }
 ?>

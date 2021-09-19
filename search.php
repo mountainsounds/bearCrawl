@@ -1,6 +1,8 @@
 <?php
 include("config.php");
 include("classes/SiteResultsProvider.php");
+include("classes/ImageResultsProvider.php");
+
 
 
   if (isset($_GET["term"])) {
@@ -23,6 +25,8 @@ include("classes/SiteResultsProvider.php");
   <title>Welcome to Bear Crawl!</title>
 
   <link rel="stylesheet" type="text/css" href="assets/css/style.css">
+  <!-- JQuery is often better at start -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 </head>
 <body>
   <div class="wrapper">
@@ -41,6 +45,7 @@ include("classes/SiteResultsProvider.php");
         <div class="searchContainer">
           <form action="search.php" method="GET">
             <div class="searchBarContainer">
+              <input type="hidden" name="type" value="<?php echo $type; ?>">
               <input class="searchBox" type="text" name="term" value="<?php echo $term ?>">
               <button class="searchButton">
                 <img src="assets/images/icons/search.png">
@@ -71,8 +76,14 @@ include("classes/SiteResultsProvider.php");
 
     <div class="mainResultsSection">
       <?php
+      if ($type == "sites") {
         $resultsProvider = new SiteResultsProvider($con);
         $pageLimit = 20;
+      } else {
+          $resultsProvider = new ImageResultsProvider($con);
+        $pageLimit = 30;
+      }
+
 
         $numResults = $resultsProvider-> getNumResults($term);
 
@@ -126,5 +137,6 @@ include("classes/SiteResultsProvider.php");
     </div>
 
   </div>
+  <script type="text/javascript" src="assets/js/script.js"></script>
 </body>
 </html>
