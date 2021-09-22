@@ -1,6 +1,5 @@
 <?php
 
-
 class ImageResultsProvider {
   private $con;
 
@@ -43,8 +42,10 @@ class ImageResultsProvider {
     $query->execute();
 
     $resultsHtml = "<div class='imageResults'>";
+    $count = 0;
 
     while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
+      $count++;
       $id = $row["id"];
       $imageUrl = $row["imageUrl"];
       $siteUrl = $row["siteUrl"];
@@ -53,20 +54,23 @@ class ImageResultsProvider {
 
       if ($title) {
         $displayText = $title;
+      } else if ($alt) {
+        $displayText = $alt;
       } else {
-
+        $displayText = $imageUrl;
       }
 
 
-      $resultsHtml .= "<div class='resultContainer'>
-                          <h3 class='title'>
-                            <a class='result' href='$url' data-linkId='$id'>
-                              $title
-                            </a>
-                          </h3>
-                          <span class='url'>$url</span>
-                          <span class='description'>$description</span>
+      $resultsHtml .= "<div class='gridItem image$count'>
+                          <a href='$imageUrl' data-fancybox data-caption='$displayText' data-siteurl='$siteUrl'>
+                            <script>
+                              $(document).ready(function() {
+                                loadImage(\"$imageUrl\", \"image$count\")
+                              });
+                            </script>
 
+                            <span class='details'>$displayText</span>
+                          </a>
                         </div>";
 
 
